@@ -70,7 +70,7 @@
 |---|---|---|---|
 | [**Vision-language foundation model for 3D medical imaging**](https://www.nature.com/articles/s44387-025-00015-9) | npj Artificial Intelligence（Nature 系新刊，暂无分区） | 2025 | 分析 23 项三维医学影像视觉-语言基础模型：架构/能力/训练数据/评估指标（JHU） |
 | [**Vision-language foundation models for 3D neuroradiological interpretation: A systematic review**](https://www.sciencedirect.com/science/article/pii/S3050577126000423) | European Journal of Radiology AI（新刊） | 2026 | 三维神经影像（脑 MRI/CT）VLM 系统综述——迄今仅有的三维专题综述之一 |
-| [**Multimodal generative AI for interpreting 3D medical images and videos**](https://www.nature.com/articles/s41746-025-01649-4) | npj Digital Medicine（一区） | 2025 | 三维医学影像与视频的多模态生成式 AI 展望（NYU） |
+| [**Multimodal generative AI for interpreting 3D medical images and videos**](https://www.nature.com/articles/s41746-025-01649-4) | npj Digital Medicine（一区） | 2025 | 三维医学影像与视频的多模态生成式 AI 展望（NYU） |   
 | Foundation Models for Volumetric Medical Imaging: Opportunities, Challenges, and Future Directions | Electronics 15(6):1245（Q2） | 2026 | 体积影像基础模型综述（补充参考） |
 
 ## 七、预印本 / 追踪中（写稿前追新）
