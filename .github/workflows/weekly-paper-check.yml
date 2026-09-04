@@ -1,0 +1,54 @@
+name: weekly-paper-check
+
+# 每周一 02:20 UTC 自动检索；也可在 Actions 页面手动 Run workflow
+on:
+  schedule:
+    - cron: "20 2 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 同一时间只保留一个待审 PR，避免堆积
+      - name: Skip if an open candidate PR exists
+        id: dup
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh pr list --state open --search 'in:title 论文候选' --json number --jq 'length' | grep -qv '^0$'; then
+            echo "已存在打开的候选 PR，本次跳过。"
+            echo "skip=1" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run paper check script
+        if: steps.dup.outputs.skip != '1'
+        run: python3 scripts/paper_check.py --repo "$GITHUB_WORKSPACE"
+
+      - name: Create PR when new candidates found
+        if: steps.dup.outputs.skip != '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet -- README.md candidates/; then
+            echo "没有新候选，结束。"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md candidates/
+          git commit -m "chore: 自动检索新增论文候选（$(date +%F)）"
+          BRANCH="bot/papers-${{ github.run_id }}"
+          git switch -c "$BRANCH"
+          git push origin "$BRANCH"
+          TITLE="$(cat .pr-title.txt)"
+          gh pr create --base main --head "$BRANCH" \
+            --title "$TITLE" \
+            --body-file .pr-body.md

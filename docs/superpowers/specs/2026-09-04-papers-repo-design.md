@@ -53,3 +53,19 @@
 - 未搬入本地清单的 A/B/C 分档细节与完整卷期页码 → 保留在本地文档，README 备注只留一句话要点与 ⚠️ 提示
 - 状态列属一次性推断映射，用户可按实际计划直接改
 - 后续如需要自动化（arXiv/Crossref 元数据巡检），可升级为方案 A，无需改动数据结构
+
+## 8. 新增功能设计：每周自动检索 + PR 审阅上传（2026-09-05 追加，已批准）
+
+**用户需求**：加入定期检查脚本，自动检索可能相关的论文（三维影像报告方向），经人工审阅后再上传。
+
+**已确认形态**：GitHub Actions 每周自动检索并开 PR → 用户在 PR 页面审阅 → Merge 即上传；Close 则仓库不变。
+
+| 组成 | 说明 |
+|---|---|
+| `scripts/paper_check.py` | Python3 标准库实现：arXiv API（cs.CV/eess.IV，提交时间倒序）+ PubMed E-utilities（期刊正式发表，[dp] 时间窗）；报告类词 × 3D/CT/MRI/体积类词相关性过滤；去重基于 README 已含 arXiv 号/PMID/DOI + `candidates/seen.json`；回溯 21 天；支持 `--dry-run` 本地预览 |
+| `.github/workflows/weekly-paper-check.yml` | cron 每周一 02:20 UTC + workflow_dispatch；用内置 GITHUB_TOKEN（无需密钥）；有改动则开分支 `bot/papers-<run_id>` 提交 README 与 seen.json 并建 PR；已存在打开候选 PR 时跳过本次；零发现静默退出 |
+| README「八、自动检索候选」区 | 候选只追加此机器生成区（按检索日期分小节），不动一~七正式分类；更新记录同步登记 |
+
+**人工职责**：审阅 PR 内候选相关性（机器关键词过滤会有噪声）；Merge 后候选仍处"待核实"状态，需人工把可用条目移入正式分类。
+
+**开放项**：仓库 Actions「Workflow permissions」若为只读需改为 Read and write（否则 GITHUB_TOKEN 无法推送分支），届时通过 API 尝试或引导用户在 Settings → Actions → General 修改。
