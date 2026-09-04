@@ -27,6 +27,7 @@
 | [**MG-3D**：Multi-grained knowledge-enhanced vision-language pre-training for 3D medical image analysis](https://www.sciencedirect.com/science/article/abs/pii/S1361841526000964) | Medical Image Analysis（一区 TOP） | 2026 | [PubMed](https://pubmed.ncbi.nlm.nih.gov/41846145/)；多粒度知识增强的三维视觉-语言预训练（报告/问答/分类） |
 | [**Enhancing 3D Medical Image Understanding With Pretraining Aided by 2D Multimodal Large Language Models**](https://doi.org/10.1109/jbhi.2025.3609739) | IEEE JBHI（一区） | 2026 | 2D MLLM 预训练增强三维影像理解；会议版 ICASSP 2025（DOI: 10.1109/icassp49660.2025.10889731） |
 | **SegReg-Rep**：Region-Aware Vision-Language Alignment for Fine-Grained Radiology Report Generation from 3D Medical Images | IEEE TPRMS | 2026 | 区域感知（分割区域引导）的视觉-语言对齐实现 3D 细粒度报告生成（B 档；DOI 见 IEEE 11520942） |
+| [**PIPA**：Prior-Driven Prompting With Diagnosis-Oriented Retrieval-Augmentation for 3-D Radiology Report Generation](https://pubmed.ncbi.nlm.nih.gov/42412673/) | IEEE TMI（一区 TOP） | 2026 | DOI: [10.1109/TMI.2026.3710717](https://doi.org/10.1109/TMI.2026.3710717)；先验驱动提示 + 面向诊断的检索增强，3-D 放射报告生成 |
 | Integrating clinical indications and patient demographics for multilabel abnormality classification and automated report generation in 3D chest CT | Frontiers in Radiology（新刊） | 2025 | 融合临床指征与人口学信息改进 3D 胸部 CT 多标签异常分类与报告生成（B 档补充） |
 
 ## 三、3D 报告生成 · 会议论文
@@ -91,14 +92,6 @@
 | HLIP / SCALE-VLP / SigVLP / OKA-CT / OCP-CT / Jolia / GLINT 等 | arXiv | 2025–2026 | 批量 3D CT 视觉-语言预训练工作（比对自 Awesome-Volumetric-Radiology-AI 清单，2026-07 版） |
 
 ---
-## 八、自动检索候选（机器生成，待人工审阅整理）
-
-> 本区由 GitHub Actions 每周自动检索（arXiv/PubMed）生成，未经人工核实；请在审阅后自行把条目移入上方正式分类，或整行删除。
-
-### 2026-09-04（新增 1 篇）
-| 论文 | 载体 | 年份 | 备注 |
-|---|---|---|---|
-| [PIPA: Prior-Driven Prompting With Diagnosis-Oriented Retrieval-Augmentation for 3-D Radiology Report Generation.](https://pubmed.ncbi.nlm.nih.gov/42412673/) | IEEE transactions on medical imaging | 2026 | IEEE transactions on medical imaging · PubMed 收录 · DOI 10.1109/TMI.2026.3710717 · 自动检索候选 |
 
 ## 维护说明
 
@@ -116,6 +109,7 @@
 
 ## 更新记录
 
+- **2026-09-04（整理）**：PR #1 审阅通过，PIPA 由自动候选移入「二、3D 报告生成 · 期刊论文」，八区已自动清空。
 - **2026-09-04（自动检索）**：新增候选 1 篇（arXiv/PubMed），经 PR 审阅合并后生效。
 - **2026-09-04**：初始收录。自本地调研清单去重整理：6 类正式条目（数据集 4 / 期刊 10 / 会议 4 / 通用模型 9 / 跨部位 6 / 综述 4）+ 预印本追踪 13；引用优先级沿用原清单 A/B/C 档位口径（记录于本地调研文档）。
 - **2026-09-04（修订）**：按需求移除各表状态列与页面装饰图标，表列统一为「论文 / 期刊·会议 / 年份 / 备注」。
