@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       # 同一时间只保留一个待审 PR，避免堆积
       - name: Skip if an open candidate PR exists
