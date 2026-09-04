@@ -98,6 +98,15 @@
 - **字段口径**：期刊/会议列建议带**中科院分区简注**（参考口径见文末）；备注列写一句话要点与更正提示；每个单元格不要出现裸的 `|` 字符（会破坏表格）。
 - **追溯源**：本仓库内容整理自本地调研文档《三维影像报告生成_3D文献清单》（检索核实日期见本地文档），其完整档位（A/B/C）与查漏说明未全部搬入本表，需要时可对照。
 - **自动候选区（第八节）**：由 GitHub Actions（weekly-paper-check）每周自动检索 arXiv/PubMed 生成并开 PR 供审阅——Merge 即上传；候选条目未经人工核实，请及时核实后移入正式分类或删除（不想要直接 Close PR 即可）。
+- **检索方式（自动脚本 `scripts/paper_check.py`，由 Actions 工作流 weekly-paper-check 驱动）**
+    - **数据源与周期**：arXiv（预印本）+ PubMed（期刊正式发表）；每周一 02:20 UTC 自动运行，也可在 Actions 页面手动 Run workflow。
+    - **arXiv 检索式**：分类 cs.CV / eess.IV 中检索 `"report generation" OR "report generator" OR "report synthesis"`，按提交时间倒序取前 60 条。
+    - **PubMed 检索式**：报告类词（report generation / report generator / radiology report generation / automated report generation / report synthesis）× 3D 影像类词（3D / 3-D / volumetric / three-dimensional / computed tomography / magnetic resonance / chest CT / MIMIC-CT / CT-RATE）× 最近 35 天时间窗。
+    - **相关性过滤**：标题或摘要需同时含「报告生成」类词与「3D/体积影像」类词；明显噪音（综述句式、纯 2D 主题等）自动剔除。
+    - **去重**：自动比对 README 已有条目的 arXiv 号 / PMID / DOI，以及 `candidates/seen.json` 的历史记录——同一篇论文不会重复推送。
+    - **产物**：命中即把候选行追加进「八、自动检索候选」区（按检索日期分节）并自动开 PR；无命中则静默结束、不开 PR。
+    - **自动清理**：候选被移入正式分类或整行删除后，下次运行自动从八区移除；八区清空则整节自动删除。
+    - **本地手动运行**：`python scripts/paper_check.py --repo .`（联网正式模式）；`--dry-run`（只预览不写文件）；`--offline`（只做清理、不联网）。
 
 ## 引用前必读
 
