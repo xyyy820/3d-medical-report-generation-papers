@@ -7,9 +7,9 @@ paper_check.py v1.1 — 三维医学影像报告生成方向论文定期检索�
   1. 检索 arXiv（预印本）与 PubMed（期刊正式发表）上与
      「三维（CT/MRI 体积）影像报告生成」相关的新论文；
   2. 与 README 已有条目及历史候选（candidates/seen.json）去重；
-  3. 把候选行写入 README「八、自动检索候选」区并生成 PR 素材；
-  4. 自动清理：已被用户移入正式分类（一~七）或删除的候选行，
-     下次运行时自动从八区移除；八区清空后整节自动删除。
+  3. 把候选行写入 README「自动检索候选」区并生成 PR 素材；
+  4. 自动清理：已被用户移入上方章节或删除的候选行，
+     下次运行时自动从候选区移除；候选区清空后整节自动删除。
 
 用法：
     python scripts/paper_check.py --repo <仓库路径>             # 正式模式
@@ -36,7 +36,7 @@ PUBMED_SUMMARY = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi"
 LOOKBACK_DAYS = 35  # 每次回溯天数（放宽，漏跑多周也不漏检）
 ARXIV_MAX = 60
 PUBMED_MAX = 50
-SECTION_TITLE = "八、自动检索候选（机器生成，待人工审阅整理）"
+SECTION_TITLE = "自动检索候选（机器生成，待人工审阅整理）"
 SECTION_NOTE = (
     "> 本区由 GitHub Actions 每周自动检索（arXiv/PubMed）生成，未经人工核实；"
     "请在审阅后自行把条目移入上方正式分类，或整行删除。已整理/删除的条目会在下次运行时自动清出本区。"
@@ -415,10 +415,10 @@ def main():
         body = [
             f"## 自动检索结果（{today}）", "",
             f"在 arXiv / PubMed 检索到 {len(rows)} 篇可能与「三维医学影像报告生成」相关的新论文，"
-            "已自动写入 README「八、自动检索候选」区。",
+            "已自动写入 README「自动检索候选」区。",
             "",
             "审阅方式：查看下方清单与 README diff——相关请点 Merge（条目进入仓库即上传）；"
-            "无关或重复请直接 Close（仓库不会变化）。已整理或删除的候选会在下次运行时自动清出八区。",
+            "无关或重复请直接 Close（仓库不会变化）。已整理或删除的候选会在下次运行时自动清出候选区。",
             "",
         ]
         for r in rows:

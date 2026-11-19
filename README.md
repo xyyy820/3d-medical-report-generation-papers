@@ -1,130 +1,277 @@
-# 三维医学影像报告生成 · 相关文献
+# 胸部三维影像报告生成 · 综述文献
 
-> **范围**：CT/MRI 体积影像 ×（报告生成 / 视觉-语言模型 / 数据集 / 综述）。   
-> **口径**：期刊/会议名、年份、DOI、卷期与中科院分区均经 Crossref、PubMed 或出版社官网核实；条目含更正/待核实提示时以提示为准，正式引用前请以 DOI 复核。
+本仓库整理胸部三维影像报告生成综述的相关文献，按数据集、评价方法、三维方法与二维相关方法组织。三维按影像来源划分，包括完整体积、切片和多平面输入；同时涉及二维与三维来源的研究单独列出。当前展示初筛保留的模型候选，后续随全文筛选更新。
 
----
+## 目录
 
-## 一、数据集（3D 图像–报告配对）
+- [一、数据集与基准](#datasets)
+- [二、评价指标与评估方法](#evaluation)
+- [三、三维影像报告生成方法](#methods-3d)
+- [四、二维相关方法](#methods-2d)
+- [自动检索候选](#automatic-candidates)
 
-| 论文 | 期刊 / 会议 | 年份 | 备注 |
-|---|---|---|---|
-| [**CT-RATE**（胸部 CT 图文语料库）](https://www.nature.com/articles/s41551-025-01599-y) | Nature Biomedical Engineering（随 CT-GEN 论文发表；一区 TOP） | 2026（在线 2026-02-12） | 50,188 例体积 + 25,692 份报告，标签与 MIMIC-CXR 对齐；3D 报告生成的标准数据基座 |
-| [**RadGenome-Chest CT**](https://www.nature.com/articles/s41597-025-05922-9) | Scientific Data（Nature 系数据期刊，一区） | 2025 | 基于 CT-RATE 扩展：197 类器官分割掩码、66.5 万句级定位报告、120 万定位 VQA 对 |
-| [**MIMIC-CT**](https://arxiv.org/abs/2409.04489) | NeurIPS 2024 Datasets & Benchmarks（CCF-A） | 2024 | 33,676 项检查 / 109,213 个体积 / 195,245 份报告；[PhysioNet](https://physionet.org/content/mimic-ct/)；病人与 MIMIC-CXR 重合，3D CTRG 评测基准起源 |
-| [**M3D-Data**](https://arxiv.org/abs/2404.00578) | NeurIPS 2024 Datasets & Benchmarks（CCF-A；BAAI + 港中文） | 2024 | 120 万图像-文本对、24.3 万条文本、9 类 3D 任务；[GitHub](https://github.com/baai-dcai/m3d) |
+<a id="datasets"></a>
 
-## 二、3D 报告生成 · 期刊论文（正式发表）
+## 一、数据集与基准
 
-| 论文 | 期刊 / 会议 | 年份 | 备注 |
-|---|---|---|---|
-| [**CT-GEN / CT-CLIP**：Generalist foundation models from a multimodal dataset for 3D computed tomography](https://www.nature.com/articles/s41551-025-01599-y) | Nature Biomedical Engineering（一区 TOP），10:1610–1628 | 2026（在线 2026-02-12） | 3D 对比预训练（CT-CLIP）+ LLM 报告生成（CT-GEN），统一分类/报告/异常检测；期刊正式版为 **2026-02**，网上常误标 2025；早期 arXiv:2312.09083 |
-| [**Reg2RG**：Large Language Model With Region-Guided Referring and Grounding for CT Report Generation](https://pubmed.ncbi.nlm.nih.gov/40215158/) | IEEE TMI（一区 TOP） | 2025 | DOI: 10.1109/TMI.2025.3559923；[项目页](https://hkustsmartlab.github.io/2025/05/21/reg2rg/)；区域引导 referring+grounding，首次在 MIMIC-CT 上系统评测 3D 报告生成 |
-| **MvKeTR**：Chest CT Report Generation With Multi-View Perception and Knowledge Enhancement | IEEE JBHI（一区） | 2025 | DOI: [10.1109/JBHI.2025.3581289](https://doi.org/10.1109/jbhi.2025.3581289)；多视图感知 + 知识增强的胸部 CT 报告生成 |
-| [**Abn-BLIP**：Abnormality-aligned Bootstrapping Language-Image Pre-training for pulmonary embolism diagnosis and report generation from CTPA](https://doi.org/10.1016/j.media.2025.103786) | Medical Image Analysis（一区 TOP） | 2026（2025 在印） | CTPA 异常对齐图文预训练：肺栓塞诊断 + 报告生成 |
-| [**Feature Decomposition（S-LMR+CSE）**：Feature Decomposition via Shared Low-rank Matrix Recovery for CT Report Generation](https://doi.org/10.1109/TMI.2025.3628159) | IEEE TMI（一区 TOP），45(4):1501–1512 | 2026（2025 在线） | 共享低秩矩阵恢复分解"共享解剖模式 + 病灶特征"，连续切片编码建模层间连续性 |
-| [**CTPA Vision-Language Model**：Vision-language model for report generation and outcome prediction in CT pulmonary angiogram](https://doi.org/10.1038/s41746-025-01807-8) | npj Digital Medicine（一区） | 2025 | 首个面向 CTPA 的视觉-语言模型：报告生成 + 临床结局预测（JHU 团队） |
-| [**MG-3D**：Multi-grained knowledge-enhanced vision-language pre-training for 3D medical image analysis](https://www.sciencedirect.com/science/article/abs/pii/S1361841526000964) | Medical Image Analysis（一区 TOP） | 2026 | [PubMed](https://pubmed.ncbi.nlm.nih.gov/41846145/)；多粒度知识增强的三维视觉-语言预训练（报告/问答/分类） |
-| [**Enhancing 3D Medical Image Understanding With Pretraining Aided by 2D Multimodal Large Language Models**](https://doi.org/10.1109/jbhi.2025.3609739) | IEEE JBHI（一区） | 2026 | 2D MLLM 预训练增强三维影像理解；会议版 ICASSP 2025（DOI: 10.1109/icassp49660.2025.10889731） |
-| **SegReg-Rep**：Region-Aware Vision-Language Alignment for Fine-Grained Radiology Report Generation from 3D Medical Images | IEEE TPRMS | 2026 | 区域感知（分割区域引导）的视觉-语言对齐实现 3D 细粒度报告生成（B 档；DOI 见 IEEE 11520942） |
-| Integrating clinical indications and patient demographics for multilabel abnormality classification and automated report generation in 3D chest CT | Frontiers in Radiology（新刊） | 2025 | 融合临床指征与人口学信息改进 3D 胸部 CT 多标签异常分类与报告生成（B 档补充） |
+待补充。
 
-## 三、3D 报告生成 · 会议论文
+<a id="evaluation"></a>
 
-| 论文 | 期刊 / 会议 | 年份 | 备注 |
-|---|---|---|---|
-| **CT-AGRG**：Automated Abnormality-Guided Report Generation from 3D Chest CT Volumes | ISBI 2025（CCF-B） | 2025 | DOI: [10.1109/ISBI60581.2025.10981073](https://doi.org/10.1109/ISBI60581.2025.10981073)；异常引导报告生成（Philips + Lyon） |
-| [**3D MLLM Design Space**：Exploring the Design Space of 3D MLLMs for CT Report Generation](https://papers.miccai.org/miccai-2025/0316-Paper2261.html) | MICCAI 2025（CCF-B） | 2025 | [DOI](https://doi.org/10.1007/978-3-032-04978-0_23) · [arXiv:2506.21535](https://arxiv.org/abs/2506.21535)；系统探索 3D MLLM 设计选择 |
-| [**CT2Rep**（自动化 3D 报告生成早期方法）](https://arxiv.org/abs/2403.06801) | MICCAI 2024（CCF-B） | 2024 | DOI: [10.1007/978-3-031-72390-2_45](https://doi.org/10.1007/978-3-031-72390-2_45)；CT-RATE 体系早期方法（TUM/Hamamci 组；奠基必引） |
-| **CTGLM**：A Vision-Language Model for Automated Chinese Chest CT Report Generation | CHIP 2025（Springer CCIS，国内会议） | 2025 | DOI: [10.1007/978-981-96-3755-3_11](https://doi.org/10.1007/978-981-96-3755-3_11)；中文胸部 CT 报告生成 |
+## 二、评价指标与评估方法
 
-## 四、通用基础模型 / 视觉-语言预训练
+待补充。
 
-| 论文 | 期刊 / 会议 | 年份 | 备注 |
-|---|---|---|---|
-| [**RadFM**：Towards generalist foundation model for radiology by leveraging web-scale 2D&3D medical data](https://www.nature.com/articles/s41467-025-62385-7) | Nature Communications（一区 TOP） | 2025 | Web 规模 2D&3D 放射通用模型，原生支持 3D CT 报告生成与 VQA（C 档：写综述时作"大模型时代"背景引用） |
-| [**M3D / M3D-CLIP / M3D-LaMed**：M3D: Advancing 3D Medical Image Analysis with Multi-Modal Large Language Models](https://arxiv.org/abs/2404.00578) | NeurIPS 2024 Datasets & Benchmarks（CCF-A） | 2024 | [GitHub](https://github.com/baai-dcai/m3d)；首个多功能三维医学多模态大模型：报告生成/VQA/分类/分割/定位（奠基必引） |
-| **Med-PaLM M**：Towards Generalist Biomedical AI | NEJM AI（新刊，暂无分区） | 2024 | DOI: [10.1056/AIoa2300138](https://doi.org/10.1056/AIoa2300138)；14 种生物医学模态通用模型；3D 体积能力有限——引用时注意定位 |
-| **BTB3D**：Better Tokens for Better 3D: Advancing Vision-Language Modeling in 3D Medical Imaging | NeurIPS 2025（CCF-A） | 2025 | 面向 3D 医学影像的视觉 token 优化（TUM）（B 档补充） |
-| **fVLM**：Large-scale and Fine-grained Vision-language Pre-training for Enhanced CT Image Understanding | ICLR 2025（CCF-A） | 2025 | 大规模细粒度（组织/病灶级）CT 预训练，下游支持 3D CT 报告生成（阿里巴巴）（B 档补充） |
-| **RadCLIP** | IEEE TNNLS（一区 TOP） | 2025（10 月卷期） | DOI: [10.1109/tnnls.2025.3568036](https://doi.org/10.1109/tnnls.2025.3568036)；期刊版为 **2025-10**，非 2024（arXiv 2024-03 先行） |
-| [**Decipher-MR**：a vision-language foundation model for 3D MRI representations](https://www.nature.com/articles/s41746-026-02596-4) | npj Digital Medicine（一区） | 2026 | MRI 专用三维视觉-语言基础模型（跨模态对照/迁移参考） |
-| [**ViSD-Boost**](https://arxiv.org/abs/2508.03742) | ICCV 2025（CCF-A） | 2025 | 解剖正常性建模提升医学 VLP 的视觉语义密度（阿里；评估含 3D 医学任务） |
-| **RadZero3D** | ICCV 2025 Workshop | 2025 | 自监督视频桥接医学视觉-语言对齐，零样本胸部 CT 解读（IEEE 11375501） |
+<a id="methods-3d"></a>
 
-## 五、脑 / 脊柱 MRI·CT 与相邻任务（跨部位参考）
+## 三、三维影像报告生成方法
 
-| 论文 | 期刊 / 会议 | 年份 | 备注 |
-|---|---|---|---|
-| [**Interpretable Brain MRI Report Generation Anchored by Lesion Topography**](https://ieeexplore.ieee.org/abstract/document/11309731) | IEEE JBHI（一区） | 2026 | DOI: [10.1109/JBHI.2025.3646647](https://doi.org/10.1109/JBHI.2025.3646647)；病灶地形图锚定的可解释脑 MRI 报告生成 |
-| **Co-Occurrence Relationship Driven Hierarchical Attention Network for Brain CT Report Generation** | IEEE TETCI，8(5):3643–3653（二区） | 2024 | DOI: [10.1109/TETCI.2024.3413002](https://doi.org/10.1109/TETCI.2024.3413002)；共现关系驱动的层次注意力脑 CT 报告生成 |
-| [**From segmentation to explanation: Generating textual reports from MRI with LLMs**](https://pubmed.ncbi.nlm.nih.gov/40633400/) | Computer Methods and Programs in Biomedicine（二区） | 2025 | DOI: [10.1016/j.cmpb.2025.108922](https://doi.org/10.1016/j.cmpb.2025.108922)；分割→LLM 的 MRI 文本报告流程 |
-| **SPINE**：Segmentation-guided Processing and Integration of Multimodal Spinal MRI for Natural-Language Enhanced Report Generation | Applied Artificial Intelligence | 2026 | DOI: [10.1080/08839514.2026.2626117](https://doi.org/10.1080/08839514.2026.2626117)；分割引导的多模态脊柱 MRI 报告生成 |
-| **MEPNet**（医学实体均衡提示网络，脑 CT 报告生成） | AAAI 2025（CCF-A） | 2025 | 实体均衡提示：脑 CT 报告生成 |
-| [**Weakly Guided Hierarchical Encoder-Decoder Network for Brain CT Report Generation**](https://ieeexplore.ieee.org/document/9669626) | IEEE BIBM 2021 | 2021 | 脑 CT 报告生成较早工作 |
+本次导入 104 条“保留模型候选”：三维影像来源 73 条，二维及三维来源 31 条。保留筛选表中的候选记录与版本，不将其计作 104 个独立模型；同题名的不同来源或版本暂未合并。
 
-## 六、综述与展望
+年份沿用筛选表的多版本口径，可能对应最早版本；发表渠道按关联题录补充，未统一为正式发表年份。arXiv 条目展示预印本版本，不据此断言其尚未正式发表。
 
-| 论文 | 期刊 / 会议 | 年份 | 备注 |
-|---|---|---|---|
-| [**Vision-language foundation model for 3D medical imaging**](https://www.nature.com/articles/s44387-025-00015-9) | npj Artificial Intelligence（Nature 系新刊，暂无分区） | 2025 | 分析 23 项三维医学影像视觉-语言基础模型：架构/能力/训练数据/评估指标（JHU） |
-| [**Vision-language foundation models for 3D neuroradiological interpretation: A systematic review**](https://www.sciencedirect.com/science/article/pii/S3050577126000423) | European Journal of Radiology AI（新刊） | 2026 | 三维神经影像（脑 MRI/CT）VLM 系统综述——迄今仅有的三维专题综述之一 |
-| [**Multimodal generative AI for interpreting 3D medical images and videos**](https://www.nature.com/articles/s41746-025-01649-4) | npj Digital Medicine（一区） | 2025 | 三维医学影像与视频的多模态生成式 AI 展望（NYU） |   
-| Foundation Models for Volumetric Medical Imaging: Opportunities, Challenges, and Future Directions | Electronics 15(6):1245（Q2） | 2026 | 体积影像基础模型综述（补充参考） |
+### 三维影像来源（73 条）
 
-## 七、预印本 / 追踪中（写稿前追新）
+| 论文标题 | 年份 | 发表渠道 |
+|---|---|---|
+| [A Multimodal Contrastive Learning Framework for Automated Pulmonary Fibrosis Report Generation from Chest HRCT](https://doi.org/10.1109/icce-taiwan71481.2026.11652790) | 2026 | IEEE International Conference on Consumer Electronics |
+| [A SAM2 and VLM-Based Automatic Radiological Reporting System for Pneumothorax Detection.](https://pubmed.ncbi.nlm.nih.gov/42940118/) | 2026 | Biomedicines |
+| [ALTER: Modeling Longitudinal Changes via Regional Differencing for 3D CT Report Generation](https://arxiv.org/abs/2608.05615) | 2026 | arXiv（预印本） |
+| [An Explainable AI Pipeline for Lung CT Analysis: Segmentation, Uncertainty Quantification, and Automated Vision–Language Reporting](https://doi.org/10.1109/ic-icns68863.2026.11537587) | 2026 | International Conference on Intelligent Computing, Networks, and Security (IC-ICNS) |
+| [An Explainable Transformer-Based Framework for Lung Cancer Classification and Automated Radiology Report Generation from Multi-Slice CT Images.](https://pubmed.ncbi.nlm.nih.gov/42193426/) | 2026 | Biomedicines |
+| [An Integrated Computational Framework for Lung Cancer Detection: Combining Deep Learning, Interactive Visualization, and Diagnostic Reporting from CT Imaging](https://doi.org/10.70917/ijcisim-2026-5116) | 2026 | International Journal of Computer Information Systems and Industrial Management Applications |
+| [ASAP: Advancing Medical Volumetric Representation Learning with Anatomy-aware Semantically-adaptive Pre-training](https://arxiv.org/abs/2606.00602) | 2026 | arXiv（预印本） |
+| [Astra: a generalizable report generation foundation model for 3D computed tomography](https://doi.org/10.21203/rs.3.rs-10034289/v1) | 2026 | Research Square（预印本） |
+| [Astra: a generalizable report generation foundation model for 3D computed tomography](https://arxiv.org/abs/2605.31437) | 2026 | arXiv（预印本） |
+| [Beyond the Embedding Bottleneck: Adaptive Retrieval-Augmented 3D CT Report Generation](https://arxiv.org/abs/2603.15822) | 2026 | arXiv（预印本） |
+| [CT‑RetrievR: fine‑grained retrieval‑based report generation for 3D CT imaging](https://doi.org/10.1117/12.3083423) | 2026 | Medical Imaging |
+| [Curriculum-Driven 3D CT Report Generation via Language-Free Visual Grafting and Zone-Constrained Compression](https://arxiv.org/abs/2603.23308) | 2026 | arXiv（预印本） |
+| [Disease-Centric Vision-Language Pretraining with Hybrid Visual Encoding for 3D Computed Tomography](https://arxiv.org/abs/2606.25546) | 2026 | arXiv（预印本） |
+| [End-to-End PET/CT Interpretation and Quantification with an LLM-Orchestrated AI Agent: A Real-World Pilot Study](https://doi.org/10.64898/2026.02.21.26346798) | 2026 | medRxiv（预印本） |
+| [End-to-End PET/CT Interpretation and Quantification with an LLM-Orchestrated AI Agent: A Real-World Pilot Study.](https://pubmed.ncbi.nlm.nih.gov/42315314/) | 2026 | Journal of Nuclear Medicine |
+| [Enhancing Fine-Grained Spatial Grounding in 3D CT Report Generation via Discriminative Guidance](https://arxiv.org/abs/2604.10437) | 2026 | arXiv（预印本） |
+| [EXACT: an explainable anomaly-aware vision foundation model for analysis of 3D chest CT](https://arxiv.org/abs/2604.24146) | 2026 | arXiv（预印本） |
+| [Explainable Multimodal Vision–Language Foundation Models for Automated Rib Fracture Detection, Anatomical Reasoning, and Clinically Faithful Radiology Report Generation](https://doi.org/10.68339/jaims.v1i1.6) | 2026 | Journal of Agentic Intelligence in Medical Sciences |
+| [FZ-VLM: A Two Stage Florence-Zephyr Vision Language Model Framework for Pulmonary Nodule Characterization and Clinical Decision Making](https://arxiv.org/abs/2608.15004) | 2026 | arXiv（预印本） |
+| [Jolia: Concept-Level Vision-Language Alignment for 3D CT Contrastive Learning](https://arxiv.org/abs/2606.24570) | 2026 | arXiv（预印本） |
+| [MedScribe: Clinically Grounded CT Reporting through Agentic Workflows](https://arxiv.org/abs/2605.01779) | 2026 | arXiv（预印本） |
+| [MonteRET: AI Agent Enhancing Multimodal LLMs with Multi-granularity Knowledge Retrieval for Chest CT Report Generation](https://arxiv.org/abs/2607.14264) | 2026 | arXiv（预印本） |
+| [NV-Reason-CT: 3D Visual Language Model for CT Analysis](https://arxiv.org/abs/2609.27511) | 2026 | arXiv（预印本） |
+| [OmniCT: Towards a Unified Slice-Volume LVLM for Comprehensive CT Analysis](https://arxiv.org/abs/2602.16110) | 2026 | arXiv（预印本） |
+| [ORCA: ORgan-Centroid Aggregation for Training-Free 3D CT Visual Token Compression](https://arxiv.org/abs/2608.00345) | 2026 | arXiv（预印本） |
+| [Performance validation of a closed loop fully automated AI model for lung nodule stratification in screening cases.](https://pubmed.ncbi.nlm.nih.gov/41564843/) | 2026 | Respiratory Investigation |
+| [RadAgent: A tool-using AI agent for stepwise interpretation of chest computed tomography](https://arxiv.org/abs/2604.15231) | 2026 | arXiv（预印本） |
+| [ReadCT: Parameter-Efficient 3D Chest CT Findings Generation Using Low- Rank Adaptation.](https://pubmed.ncbi.nlm.nih.gov/42983219/) | 2026 | Current Medical Imaging |
+| [Resolution Meets Reduction: Efficient Visual Context for 3D Radiology Report Generation](https://arxiv.org/abs/2608.08713) | 2026 | arXiv（预印本） |
+| [SegReg-Rep: Region-Aware Vision-Language Alignment for Fine-Grained Radiology Report Generation from 3D Medical Images](https://doi.org/10.1109/trpms.2026.3693637) | 2026 | IEEE Transactions on Radiation and Plasma Medical Sciences |
+| [SelfCue: Making a 3D CT Report Generator Say What It Already Knows](https://arxiv.org/abs/2609.31788) | 2026 | arXiv（预印本） |
+| [SliceWorld: A Predictive and Controllable World-State Model for CT Report Generation](https://arxiv.org/abs/2605.24371) | 2026 | arXiv（预印本） |
+| [TNM-Accountable Whole-Body 3-Dimensional Fluorodeoxyglucose Positron Emission Tomography/Computed Tomography Report Drafting in Lung Cancer Cohorts via Structured Impressions and Organ-wise Exemplar Synthesis.](https://pubmed.ncbi.nlm.nih.gov/42483403/) | 2026 | Research |
+| [Towards a Radiologist Imitation Framework for 3D CT Diagnosis with Multimodal LLMs](https://doi.org/10.18653/v1/2026.bionlp-1.85) | 2026 | BioNLP 2026 |
+| [U-VLM: Hierarchical Vision Language Modeling for Report Generation](https://arxiv.org/abs/2603.00479) | 2026 | arXiv（预印本） |
+| [Visual question answering-based image-finding generation for pulmonary nodules on chest CT from structured annotations.](https://pubmed.ncbi.nlm.nih.gov/41894071/) | 2026 | International Journal of Computer Assisted Radiology and Surgery |
+| [VLI-Agent: Vision-Language-Interpretation Agents for Automated 3D CT Understanding](https://doi.org/10.3724/2096-7004.di.2026.0097) | 2026 | Data Intelligence |
+| [Volumetric Chest CT Report Generation via State-Space Visual Prompting and Clinical-Fact Alignment.](https://pubmed.ncbi.nlm.nih.gov/42976478/) | 2026 | Physics in Medicine &amp; Biology |
+| [A Multimodal Vision-Language framework for pulmonary embolism detection: integrating 3D CT analysis with medical LLM report generation](https://hdl.handle.net/11071/16377) | 2025 | Strathmore University 机构库 |
+| [Abn-BLIP: Abnormality-aligned Bootstrapping Language-Image Pre-training for pulmonary embolism diagnosis and report generation from CTPA.](https://pubmed.ncbi.nlm.nih.gov/40945174/) | 2025 | Medical Image Analysis |
+| [ClearView: A Quality-aware Cross-modal Alignment Framework for CT Report Generation](https://doi.org/10.1145/3731715.3733287) | 2025 | ACM ICMR 2025 |
+| [Convolutional neural network application for automated lung cancer detection on chest CT using Google AI Studio.](https://pubmed.ncbi.nlm.nih.gov/40903384/) | 2025 | Radiography (London, England : 1995) |
+| [CT-GRAPH: Hierarchical Graph Attention Network for Anatomy-Guided CT Report Generation](https://arxiv.org/abs/2508.05375) | 2025 | arXiv（预印本） |
+| [CTGLM: A Vision-Language Model for Automated Chinese Chest CT Report Generation](https://doi.org/10.1007/978-981-96-3755-3_11) | 2025 | Springer CCIS |
+| [From image to report: automating lung cancer screening interpretation and reporting with vision-language models.](https://pubmed.ncbi.nlm.nih.gov/41083099/) | 2025 | Journal of Biomedical Informatics |
+| [Integrating clinical indications and patient demographics for multilabel abnormality classification and automated report generation in 3D chest CT scans.](https://pubmed.ncbi.nlm.nih.gov/41209490/) | 2025 | Frontiers in Radiology |
+| [LungNoduleAgent: A Collaborative Multi-Agent System for Precision Diagnosis of Lung Nodules](https://arxiv.org/abs/2511.21042) | 2025 | arXiv（预印本） |
+| [Multimodal Large Language Model for Medical Report Generation](https://doi.org/10.14711/thesis-hdl152429) | 2025 | 香港科技大学学位论文 |
+| [OrthoInsight: Rib Fracture Diagnosis and Report Generation Based on Multi-Modal Large Models](https://arxiv.org/abs/2507.13993) | 2025 | arXiv（预印本） |
+| [Preliminary Study on Image-Finding Generation and Classification of Lung Nodules in Chest CT Images Using Vision-Language Models](https://doi.org/10.3390/computers14110489) | 2025 | Computers |
+| [Retrieval-based adaptive fusion strategy for medical report generation.](https://pubmed.ncbi.nlm.nih.gov/40639153/) | 2025 | Computer Methods and Programs in Biomedicine |
+| [Vision-language model for report generation and outcome prediction in CT pulmonary angiogram.](https://pubmed.ncbi.nlm.nih.gov/40652098/) | 2025 | npj Digital Medicine |
+| [3D-CT-GPT: Generating 3D Radiology Reports through Integration of Large Vision-Language Models](https://arxiv.org/abs/2409.19330) | 2024 | arXiv（预印本） |
+| [CT-AGRG: Automated Abnormality-Guided Report Generation from 3D Chest CT Volumes](https://arxiv.org/abs/2408.11965) | 2024 | arXiv（预印本） |
+| [CT2Rep: Automated Radiology Report Generation for 3D Medical Imaging](https://arxiv.org/abs/2403.06801) | 2024 | arXiv（预印本） |
+| [Development of automatic generation system for lung nodule finding descriptions.](https://pubmed.ncbi.nlm.nih.gov/38512860/) | 2024 | PLOS ONE |
+| [Dia-LLaMA: Towards Large Language Model-driven CT Report Generation](https://arxiv.org/abs/2403.16386) | 2024 | arXiv（预印本） |
+| [E3D-GPT: Enhanced 3D Visual Foundation for Medical Vision-Language Model](https://arxiv.org/abs/2410.14200) | 2024 | arXiv（预印本） |
+| [Large Language Model With Region-Guided Referring and Grounding for CT Report Generation.](https://pubmed.ncbi.nlm.nih.gov/40215158/) | 2024 | IEEE Transactions on Medical Imaging |
+| [MvKeTR: Chest CT Report Generation With Multi-View Perception and Knowledge Enhancement.](https://pubmed.ncbi.nlm.nih.gov/40536849/) | 2024 | IEEE Journal of Biomedical and Health Informatics |
+| [Read like a radiologist: Efficient vision-language model for 3D medical imaging interpretation.](https://pubmed.ncbi.nlm.nih.gov/41990528/) | 2024 | Medical Image Analysis |
+| [Symbiotic Fusion of Evolving Anatomical Landscapes for Intelligent Diagnostic Narratives](https://doi.org/10.1109/bibm62325.2024.10822272) | 2024 | IEEE International Conference on Bioinformatics and Biomedicine |
+| [TGMT: A Terminology-Guided Multi-Task Approach for Lung Cancer CT Report Generation.](https://pubmed.ncbi.nlm.nih.gov/40039464/) | 2024 | IEEE EMBC |
+| [Medical Report Generation and Chatbot for COVID_19 Diagnosis Using Open-AI](https://doi.org/10.21203/rs.3.rs-2563448/v1) | 2023 | Research Square（预印本） |
+| [AI-Supported Comprehensive Detection and Quantification of Biomarkers of Subclinical Widespread Diseases at Chest CT for Preventive Medicine.](https://pubmed.ncbi.nlm.nih.gov/36360507/) | 2022 | Healthcare |
+| [Deep Multi-Objective Learning from Low-Dose CT for Automatic Lung-RADS Report Generation.](https://pubmed.ncbi.nlm.nih.gov/35330417/) | 2022 | Journal of Personalized Medicine |
+| [Artificial intelligence to codify lung CT in Covid-19 patients.](https://pubmed.ncbi.nlm.nih.gov/32367319/) | 2020 | La Radiologia Medica |
+| [Automatic Detection and Classification of Rib Fractures on Thoracic CT Using Convolutional Neural Network: Accuracy and Feasibility.](https://pubmed.ncbi.nlm.nih.gov/32524787/) | 2020 | Korean Journal of Radiology |
+| [Lung-Wise Tuberculosis Analysis and Automatic CT Report Generation with Hybrid Feature and Ensemble Learning](https://www.semanticscholar.org/paper/b4733a72cbab0e28df14b502a067452981b5d59a) | 2020 | Conference and Labs of the Evaluation Forum |
+| [A deep learning system that generates quantitative CT reports for diagnosing pulmonary Tuberculosis](https://arxiv.org/abs/1910.02285) | 2019 | arXiv（预印本） |
+| [Feature and Deep Learning Based Approaches for Automatic Report Generation and Severity Scoring of Lung Tuberculosis from CT Images](https://www.semanticscholar.org/paper/4f2e7d41677c16ba5ea3958ab61f6f6a87369d3f) | 2019 | Conference and Labs of the Evaluation Forum |
+| [Lung Graph-Model Classification with SVM and CNN for Tuberculosis Severity Assessment and Automatic CT Report Generation](https://www.semanticscholar.org/paper/772834c11bfeaf940800181ec332e2e67f35b07e) | 2019 | Conference and Labs of the Evaluation Forum |
+| [Integration of Chest CT CAD into the Clinical Workflow and Impact on Radiologist Efficiency.](https://pubmed.ncbi.nlm.nih.gov/30097402/) | 2018 | Academic Radiology |
 
-| 论文 | 载体 | 年份 | 备注 |
-|---|---|---|---|
-| [**Astra**](https://arxiv.org/abs/2605.31437) | arXiv | 2026 | 面向 3D CT 的可泛化报告生成基础模型（Ma 等） |
-| [**SliceWorld**](https://arxiv.org/abs/2605.24371) | arXiv | 2026 | CT 报告生成的预测性可控"世界状态"模型 |
-| Template Collapse in 3D CT Report Generation | arXiv（待核实） | 2026 | arXiv:2605.30984；测量并缓解 3D CT 报告生成模板崩塌——与综述"评估与语言重复"讨论直接相关 |
-| [**MedVista3D**](https://arxiv.org/abs/2509.03800) | arXiv | 2025 | 3D CT 病灶检测 + 理解 + 报告一体化 VLM |
-| [**COLIPRI**](https://arxiv.org/abs/2510.15042) | arXiv | 2025 | 微软 + TUM：大规模 3D 医学影像语言-图像预训练 |
-| **Percival** | medRxiv | 2025 | 泛器官 3D CT 视觉-语言模型 |
-| [**Med-2E3**](https://arxiv.org/abs/2411.12783) | arXiv | 2024 | 2D 增强的 3D 医学多模态大模型（CT-RATE / M3D-Data 上评测） |
-| [**CT-GLIP**](https://arxiv.org/abs/2404.15272) | arXiv | 2024 | 全身 3D CT 图文预训练（grounded），覆盖多器官 |
-| [**Med-Flamingo**](https://arxiv.org/abs/2307.15189) | ML4H@NeurIPS 2023（workshop） | 2023 | 常被引为 npj Digital Medicine 2024 的期刊版**未能核实**，引用前请自行确认 |
-| [**GenerateCT**](https://arxiv.org/abs/2305.16037) | arXiv | 2023 | 文本→3D 胸部 CT 生成——报告生成的**反向任务** |
-| [**Imitating Radiological Scrolling**：A Global-Local Attention Model for 3D Chest CT Volumes Multi-Label Anomaly Classification](https://arxiv.org/abs/2503.20652) | arXiv | 2025 | 3D CT 异常分类——报告生成的视觉前端 |
-| [**AI-Driven Radiology Report Generation for Traumatic Brain Injuries**](https://arxiv.org/abs/2510.08498) | arXiv | 2025 | 创伤性脑损伤（CT）报告生成 |
-| HLIP / SCALE-VLP / SigVLP / OKA-CT / OCP-CT / Jolia / GLINT 等 | arXiv | 2025–2026 | 批量 3D CT 视觉-语言预训练工作（比对自 Awesome-Volumetric-Radiology-AI 清单，2026-07 版） |
+### 二维及三维来源（31 条）
 
----
+本组同时涉及原生二维与三维检查来源；三维实验的部位和任务仍需结合全文确认。
 
-## 八、自动检索候选（机器生成，待人工审阅整理）
+| 论文标题 | 年份 | 发表渠道 |
+|---|---|---|
+| [Automatic CT image report generation based on parallel independent encoding and reverse cross-attention](https://doi.org/10.1049/icp.2025.4651) | 2026 | IET Conference Proceedings |
+| [Computer Vision System and Transformer-Based Multimodal Fusion of Medical Images for Enhanced Diagnostic Decision Making](https://doi.org/10.31185/wjcms.543) | 2026 | Wasit Journal of Computer and Mathematics Science |
+| [Graph-Supervised Hierarchical Clinical Alignment for Radiology Report Generation with Large Language Models](https://arxiv.org/abs/2608.24121) | 2026 | arXiv（预印本） |
+| [MediFusionNet: A Hybrid CNN-Based Multi-Disease Diagnostic Web Platform](https://doi.org/10.36548/jitdw.2026.4.005) | 2026 | Journal of Information Technology and Digital World |
+| [Personalized Medicine and Process Optimization: Analysis and Implementation of Intelligent Tools to Support the Clinical Process](https://doi.org/10.15167/wehbe-alaa_phd2026-03-10) | 2026 | University of Genoa 学位论文 |
+| [RVLM: Recursive Vision-Language Models with Adaptive Depth](https://arxiv.org/abs/2603.24224) | 2026 | arXiv（预印本） |
+| [TriPACT: A Causality-Motivated Multimodal Framework With Active Counterfactual Testing for Radiology Report Generation](https://doi.org/10.1109/access.2026.3701619) | 2026 | IEEE Access |
+| [A Medical Multimodal Large Language Model for Pediatric Pneumonia.](https://pubmed.ncbi.nlm.nih.gov/40354198/) | 2025 | IEEE Journal of Biomedical and Health Informatics |
+| [A vision attention driven Language framework for medical report generation.](https://pubmed.ncbi.nlm.nih.gov/40155699/) | 2025 | Scientific Reports |
+| [Automatic Radiology Report Generation Based on State-Space Model.](https://pubmed.ncbi.nlm.nih.gov/40522799/) | 2025 | IEEE Journal of Biomedical and Health Informatics |
+| [Chikitsak 1.0 AI medical Assistant](https://doi.org/10.22541/au.174249329.92063634/v1) | 2025 | 预印本（Wiley） |
+| [Comparative evaluation of generative AI models for chest radiograph report generation in the emergency department.](https://pubmed.ncbi.nlm.nih.gov/42268300/) | 2025 | European Radiology |
+| [Deep Disease Label-guided Graph Convolutional Network for Medical Report Generation](https://doi.org/10.1145/3722226) | 2025 | ACM Transactions on Knowledge Discovery from Data |
+| [Describe Anything in Medical Images](https://arxiv.org/abs/2505.05804) | 2025 | arXiv（预印本） |
+| [LACFNet: Locality Aware Cross Modal Fusion Network for Automatic Medical Image Report Generation](https://doi.org/10.1109/acait67930.2025.11522656) | 2025 | 2025 Asian Conference on Artificial Intelligence Technology (ACAIT) |
+| [Medical semantic knowledge-integrated multitask learning network for report generation and neoadjuvant chemotherapy response prediction.](https://pubmed.ncbi.nlm.nih.gov/40660946/) | 2025 | Medical Physics |
+| [Pneumonia Diagnosis using Deep Learning Optimized with Generative AI for Analysis, Intelligent Report Generation and Recommendations](https://doi.org/10.1109/icscn67106.2025.11308282) | 2025 | 2025 International Conference on Sustainable Communication Networks and Application (ICSCN) |
+| [Privacy-Preserving Federated Vision Transformers for Automated Medical Image Analysis and Clinical Report Generation: A Multi-Institutional Healthcare Intelligence Framework](https://doi.org/10.22259/2637-5591.0701004) | 2025 | Research Journal of Nanoscience and Engineering |
+| [Soft label-guided transformer for radiology report generation.](https://pubmed.ncbi.nlm.nih.gov/41093123/) | 2025 | Journal of Biomedical Informatics |
+| [Advancing Multimodal Medical Capabilities of Gemini](https://arxiv.org/abs/2405.03162) | 2024 | arXiv（预印本） |
+| [An End-to-End Pipeline Integrating Segmentation, Anomaly Detection, and Report Generation for Medical Imaging Analysis](https://doi.org/10.1109/icdcc62744.2024.10960883) | 2024 | 2024 First International Conference on Data, Computation and Communication (ICDCC) |
+| [An End-to-End Pipeline Integrating Segmentation, Anomaly Detection, and Report Generation for Medical Imaging Analysis](https://doi.org/10.1109/icdcc62744.2024.10961096) | 2024 | International Conference on Data, Computation and Communication (ICDCC) |
+| [Bootstrapping Chest CT Image Understanding by Distilling Knowledge from X-ray Expert Models](https://arxiv.org/abs/2404.04936) | 2024 | arXiv（预印本） |
+| [Expert-level vision-language foundation model for real-world radiology and comprehensive evaluation](https://arxiv.org/abs/2409.16183) | 2024 | arXiv（预印本） |
+| [Hierarchical medical image report adversarial generation with hybrid discriminator.](https://pubmed.ncbi.nlm.nih.gov/38547777/) | 2024 | Artificial Intelligence in Medicine |
+| [MedImageInsight: An Open-Source Embedding Model for General Domain Medical Imaging](https://arxiv.org/abs/2410.06542) | 2024 | arXiv（预印本） |
+| [Self-improving generative foundation model for synthetic medical image generation and clinical applications.](https://pubmed.ncbi.nlm.nih.gov/39663467/) | 2024 | Nature Medicine |
+| [A Novel Deep Learning Model for Medical Report Generation by Inter-Intra Information Calibration.](https://pubmed.ncbi.nlm.nih.gov/37018727/) | 2023 | IEEE Journal of Biomedical and Health Informatics |
+| [Clinical-BERT: Vision-Language Pre-training for Radiograph Diagnosis and Reports Generation](https://doi.org/10.1609/aaai.v36i3.20204) | 2022 | AAAI Conference on Artificial Intelligence |
+| [Medical-VLBERT: Medical Visual Language BERT for COVID-19 CT Report Generation With Alternate Learning.](https://pubmed.ncbi.nlm.nih.gov/34370672/) | 2021 | IEEE Transactions on Neural Networks and Learning Systems |
+| [Auxiliary signal-guided knowledge encoder-decoder for medical report generation.](https://pubmed.ncbi.nlm.nih.gov/36060430/) | 2020 | World Wide Web |
 
-> 本区由 GitHub Actions 每周自动检索（arXiv/PubMed）生成，未经人工核实；请在审阅后自行把条目移入上方正式分类，或整行删除。已整理/删除的条目会在下次运行时自动清出本区。
+<a id="methods-2d"></a>
 
-### 2026-09-04（新增 1 篇）
-| 论文 | 载体 | 年份 | 备注 |
-|---|---|---|---|
-| [PIPA: Prior-Driven Prompting With Diagnosis-Oriented Retrieval-Augmentation for 3-D Radiology Report Generation](https://pubmed.ncbi.nlm.nih.gov/42412673/) | IEEE TMI | 2026 | PubMed 收录 · DOI 10.1109/TMI.2026.3710717 · 自动检索候选（待人工核实） |
+## 四、二维相关方法
+
+待完成代表性文献筛选后补充。
+
+<!-- 已展示候选的关联标识，供自动检索去重；不代表独立研究数量。
+DOI:10.1109/icce-taiwan71481.2026.11652790
+PMID:42940118 ; DOI:10.3390/biomedicines14102312 ; https://pubmed.ncbi.nlm.nih.gov/42940118/
+arXiv:2608.05615 ; DOI:10.48550/arxiv.2608.05615
+DOI:10.1109/ic-icns68863.2026.11537587
+PMID:42193426 ; DOI:10.3390/biomedicines14051103 ; https://pubmed.ncbi.nlm.nih.gov/42193426/
+DOI:10.70917/ijcisim-2026-5116
+arXiv:2606.00602 ; DOI:10.48550/arxiv.2606.00602
+DOI:10.21203/rs.3.rs-10034289/v1
+arXiv:2605.31437 ; DOI:10.48550/arxiv.2605.31437
+arXiv:2603.15822 ; DOI:10.48550/arxiv.2603.15822
+DOI:10.1117/12.3083423
+arXiv:2603.23308 ; DOI:10.48550/arxiv.2603.23308
+arXiv:2606.25546 ; DOI:10.48550/arxiv.2606.25546
+DOI:10.64898/2026.02.21.26346798
+PMID:42315314 ; DOI:10.2967/jnumed.126.272362 ; https://pubmed.ncbi.nlm.nih.gov/42315314/
+arXiv:2604.10437 ; DOI:10.48550/arxiv.2604.10437
+arXiv:2604.24146 ; DOI:10.48550/arxiv.2604.24146
+DOI:10.68339/jaims.v1i1.6
+arXiv:2608.15004
+arXiv:2606.24570 ; DOI:10.48550/arxiv.2606.24570
+arXiv:2605.01779 ; DOI:10.48550/arxiv.2605.01779
+arXiv:2607.14264 ; DOI:10.48550/arxiv.2607.14264
+arXiv:2609.27511 ; DOI:10.48550/arxiv.2609.27511
+arXiv:2602.16110
+arXiv:2608.00345
+PMID:41564843 ; DOI:10.1016/j.resinv.2026.101373 ; https://pubmed.ncbi.nlm.nih.gov/41564843/
+arXiv:2604.15231 ; DOI:10.48550/arxiv.2604.15231
+PMID:42983219 ; DOI:10.2174/0115734056498625261015050759 ; https://pubmed.ncbi.nlm.nih.gov/42983219/
+arXiv:2608.08713 ; DOI:10.48550/arxiv.2608.08713
+DOI:10.1109/trpms.2026.3693637
+arXiv:2609.31788
+arXiv:2605.24371
+PMID:42483403 ; DOI:10.34133/research.1343 ; https://pubmed.ncbi.nlm.nih.gov/42483403/
+DOI:10.18653/v1/2026.bionlp-1.85
+arXiv:2603.00479 ; DOI:10.48550/arxiv.2603.00479
+PMID:41894071 ; DOI:10.1007/s11548-026-03608-0 ; arXiv:2601.11075 ; https://pubmed.ncbi.nlm.nih.gov/41894071/
+DOI:10.3724/2096-7004.di.2026.0097
+PMID:42976478 ; DOI:10.1088/1361-6560/aebd60 ; https://pubmed.ncbi.nlm.nih.gov/42976478/
+OpenAlex:W7214809670
+PMID:40945174 ; DOI:10.1016/j.media.2025.103786 ; DOI:10.48550/arxiv.2503.02034 ; arXiv:2503.02034 ; https://pubmed.ncbi.nlm.nih.gov/40945174/
+DOI:10.1145/3731715.3733287
+PMID:40903384 ; DOI:10.1016/j.radi.2025.103152 ; https://pubmed.ncbi.nlm.nih.gov/40903384/
+arXiv:2508.05375 ; DOI:10.1109/iccvw69036.2025.00706
+DOI:10.1007/978-981-96-3755-3_11
+PMID:41083099 ; DOI:10.1016/j.jbi.2025.104931 ; https://pubmed.ncbi.nlm.nih.gov/41083099/
+PMID:41209490 ; DOI:10.3389/fradi.2025.1672364 ; https://pubmed.ncbi.nlm.nih.gov/41209490/
+arXiv:2511.21042 ; DOI:10.1609/aaai.v40i35.40225 ; DOI:10.48550/arxiv.2511.21042
+DOI:10.14711/thesis-hdl152429
+arXiv:2507.13993 ; DOI:10.48550/arxiv.2507.13993
+DOI:10.3390/computers14110489
+PMID:40639153 ; DOI:10.1016/j.cmpb.2025.108907 ; https://pubmed.ncbi.nlm.nih.gov/40639153/
+PMID:40652098 ; DOI:10.1038/s41746-025-01807-8 ; https://pubmed.ncbi.nlm.nih.gov/40652098/
+arXiv:2409.19330 ; DOI:10.48550/arxiv.2409.19330
+arXiv:2408.11965 ; DOI:10.1109/isbi60581.2025.10981073
+arXiv:2403.06801 ; DOI:10.1007/978-3-031-72390-2_45 ; DOI:10.48550/arxiv.2403.06801
+PMID:38512860 ; DOI:10.1371/journal.pone.0300325 ; https://pubmed.ncbi.nlm.nih.gov/38512860/
+arXiv:2403.16386 ; DOI:10.48550/arxiv.2403.16386
+arXiv:2410.14200 ; DOI:10.48550/arxiv.2410.14200
+PMID:40215158 ; DOI:10.1109/tmi.2025.3559923 ; arXiv:2411.15539 ; https://pubmed.ncbi.nlm.nih.gov/40215158/
+PMID:40536849 ; DOI:10.1109/jbhi.2025.3581289 ; DOI:10.48550/arxiv.2411.18309 ; arXiv:2411.18309 ; https://pubmed.ncbi.nlm.nih.gov/40536849/
+PMID:41990528 ; DOI:10.1016/j.media.2026.104077 ; DOI:10.48550/arxiv.2412.13558 ; arXiv:2412.13558 ; https://pubmed.ncbi.nlm.nih.gov/41990528/
+DOI:10.1109/bibm62325.2024.10822272
+PMID:40039464 ; DOI:10.1109/embc53108.2024.10781518 ; https://pubmed.ncbi.nlm.nih.gov/40039464/
+DOI:10.21203/rs.3.rs-2563448/v1
+PMID:36360507 ; DOI:10.3390/healthcare10112166 ; https://pubmed.ncbi.nlm.nih.gov/36360507/
+PMID:35330417 ; DOI:10.3390/jpm12030417 ; https://pubmed.ncbi.nlm.nih.gov/35330417/
+PMID:32367319 ; DOI:10.1007/s11547-020-01195-x ; https://pubmed.ncbi.nlm.nih.gov/32367319/
+PMID:32524787 ; DOI:10.3348/kjr.2019.0651 ; https://pubmed.ncbi.nlm.nih.gov/32524787/
+Semantic Scholar:b4733a72cbab0e28df14b502a067452981b5d59a
+arXiv:1910.02285 ; DOI:10.1007/s10489-020-02051-1
+Semantic Scholar:4f2e7d41677c16ba5ea3958ab61f6f6a87369d3f
+Semantic Scholar:772834c11bfeaf940800181ec332e2e67f35b07e
+PMID:30097402 ; DOI:10.1016/j.acra.2018.07.006 ; https://pubmed.ncbi.nlm.nih.gov/30097402/
+DOI:10.1049/icp.2025.4651
+DOI:10.31185/wjcms.543
+arXiv:2608.24121 ; DOI:10.1145/3767308.3835881 ; DOI:10.48550/arxiv.2608.24121
+DOI:10.36548/jitdw.2026.4.005
+DOI:10.15167/wehbe-alaa_phd2026-03-10
+arXiv:2603.24224 ; DOI:10.48550/arxiv.2603.24224
+DOI:10.1109/access.2026.3701619
+PMID:40354198 ; DOI:10.1109/jbhi.2025.3569361 ; https://pubmed.ncbi.nlm.nih.gov/40354198/
+PMID:40155699 ; DOI:10.1038/s41598-025-95666-8 ; https://pubmed.ncbi.nlm.nih.gov/40155699/
+PMID:40522799 ; DOI:10.1109/jbhi.2025.3579888 ; https://pubmed.ncbi.nlm.nih.gov/40522799/
+DOI:10.22541/au.174249329.92063634/v1
+PMID:42268300 ; DOI:10.1007/s00330-026-12648-8 ; arXiv:2512.00271 ; https://pubmed.ncbi.nlm.nih.gov/42268300/
+DOI:10.1145/3722226
+arXiv:2505.05804
+DOI:10.1109/acait67930.2025.11522656
+PMID:40660946 ; DOI:10.1002/mp.17925 ; https://pubmed.ncbi.nlm.nih.gov/40660946/
+DOI:10.1109/icscn67106.2025.11308282
+DOI:10.22259/2637-5591.0701004
+PMID:41093123 ; DOI:10.1016/j.jbi.2025.104924 ; https://pubmed.ncbi.nlm.nih.gov/41093123/
+arXiv:2405.03162 ; DOI:10.48550/arxiv.2405.03162
+DOI:10.1109/icdcc62744.2024.10960883
+DOI:10.1109/icdcc62744.2024.10961096
+arXiv:2404.04936 ; DOI:10.1109/cvpr52733.2024.01068
+arXiv:2409.16183 ; DOI:10.48550/arxiv.2409.16183
+PMID:38547777 ; DOI:10.1016/j.artmed.2024.102846 ; https://pubmed.ncbi.nlm.nih.gov/38547777/
+arXiv:2410.06542 ; DOI:10.48550/arxiv.2410.06542
+PMID:39663467 ; DOI:10.1038/s41591-024-03359-y ; https://pubmed.ncbi.nlm.nih.gov/39663467/
+PMID:37018727 ; DOI:10.1109/jbhi.2023.3236661 ; https://pubmed.ncbi.nlm.nih.gov/37018727/
+DOI:10.1609/aaai.v36i3.20204
+PMID:34370672 ; DOI:10.1109/tnnls.2021.3099165 ; arXiv:2108.05067 ; https://pubmed.ncbi.nlm.nih.gov/34370672/
+PMID:36060430 ; DOI:10.1007/s11280-022-01013-6 ; arXiv:2006.03744 ; https://pubmed.ncbi.nlm.nih.gov/36060430/
+-->
+
+<a id="automatic-candidates"></a>
+
+## 自动检索候选（机器生成，待人工审阅整理）
+
+> 本区由 GitHub Actions 每周检索 arXiv / PubMed 生成。候选经审阅后再移入相应章节。
 
 ## 维护说明
 
-- **新增一篇**：在对应分类表末尾复制一行 → 填「论文名（英文全称或简称）」→ 把标题/链接贴上 → 填「期刊/会议 + 年份」与备注 → 点 *Preview* 确认表格不错位 → *Commit changes*。
-- **字段口径**：期刊/会议列建议带**中科院分区简注**（参考口径见文末）；备注列写一句话要点与更正提示；每个单元格不要出现裸的 `|` 字符（会破坏表格）。
-- **追溯源**：本仓库内容整理自本地调研文档《三维影像报告生成_3D文献清单》（检索核实日期见本地文档），其完整档位（A/B/C）与查漏说明未全部搬入本表，需要时可对照。
-- **自动候选区（第八节）**：由 GitHub Actions（weekly-paper-check）每周自动检索 arXiv/PubMed 生成并开 PR 供审阅——Merge 即上传；候选条目未经人工核实，请及时核实后移入正式分类或删除（不想要直接 Close PR 即可）。
-- **检索方式（自动脚本 `scripts/paper_check.py`，由 Actions 工作流 weekly-paper-check 驱动）**
-    - **数据源与周期**：arXiv（预印本）+ PubMed（期刊正式发表）；每周一 02:20 UTC 自动运行，也可在 Actions 页面手动 Run workflow。
-    - **arXiv 检索式**：分类 cs.CV / eess.IV 中检索 `"report generation" OR "report generator" OR "report synthesis"`，按提交时间倒序取前 60 条。
-    - **PubMed 检索式**：报告类词（report generation / report generator / radiology report generation / automated report generation / report synthesis）× 3D 影像类词（3D / 3-D / volumetric / three-dimensional / computed tomography / magnetic resonance / chest CT / MIMIC-CT / CT-RATE）× 最近 35 天时间窗。
-    - **相关性过滤**：标题或摘要需同时含「报告生成」类词与「3D/体积影像」类词；明显噪音（综述句式、纯 2D 主题等）自动剔除。
-    - **去重**：自动比对 README 已有条目的 arXiv 号 / PMID / DOI，以及 `candidates/seen.json` 的历史记录——同一篇论文不会重复推送。
-    - **产物**：命中即把候选行追加进「八、自动检索候选」区（按检索日期分节）并自动开 PR；无命中则静默结束、不开 PR。
-    - **自动清理**：候选被移入正式分类或整行删除后，下次运行自动从八区移除；八区清空则整节自动删除。
-    - **本地手动运行**：`python scripts/paper_check.py --repo .`（联网正式模式）；`--dry-run`（只预览不写文件）；`--offline`（只做清理、不联网）。
-
-## 引用前必读
-
-1. **中科院分区**为参考标注，以最新《中科院文献情报中心分区表（升级版）》为准；npj AI、NEJM AI、EJR AI 为 2024–2026 新刊，暂未入分区表（但均为 Nature/NEJM 系）。
-2. 会议与期刊并存条目（M3D、RadFM、Enhancing 3D…）：正式期刊版优先引用，会议版作补充。
-3. 所有 DOI/链接均为整理时实测可访问；卷期页码等细节请在正式引用前用 DOI 复核。
+- 本轮模型条目来自 2026-11-20 当前筛选表中“三维影像来源”“二维及三维”两张工作表，仅导入“保留模型候选”；数据集、评价、背景、待核及纯二维条目未在本轮导入。
+- 新增或更新文献时填写标题链接、年份和发表渠道。年份与发表渠道应注明所对应的版本；后续统一正式发表信息时，再逐条核对。
+- 自动检索保留每周一 02:20 UTC（北京时间 10:20）运行、生成候选 PR 并由人工审阅的方式；本轮仅适配章节结构，现有 CT / MRI 检索范围暂时沿用，后续再按胸部主题调整。
+- 自动候选移入上方章节后，脚本依据 arXiv、PMID、DOI 清理重复项；删除候选表示放弃本次候选，历史记录仍用于避免重复推送。
 
 ## 更新记录
 
-- **2026-09-04（自动检索）**：新增候选 1 篇（arXiv/PubMed），经 PR 审阅合并后生效。
-- **2026-09-03**：初始收录。自本地调研清单去重整理：6 类正式条目（数据集 4 / 期刊 10 / 会议 4 / 通用模型 9 / 跨部位 6 / 综述 4）+ 预印本追踪 13；引用优先级沿用原清单 A/B/C 档位口径（记录于本地调研文档）。
-- **2026-09-03（修订）**：按需求移除各表状态列与页面装饰图标，表列统一为「论文 / 期刊·会议 / 年份 / 备注」。
+- **2026-11-20**：按综述章节重建页面，以本轮筛选表中的 104 条模型候选替换旧文献列表；数据集、评价与纯二维相关方法待后续补充。
